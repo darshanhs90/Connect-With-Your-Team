@@ -7,8 +7,8 @@ var client = new Twitter({
     access_token_secret: 'czQre16YZKoC4Csi18gGufu8PxF733aL5VnzbhurlGvHw'
 });
  
-var params = {screen_name: 'nodejs'};
-client.get('statuses/user_timeline', params, function(error, tweets, response){
+var params = {};
+client.get('followers/list', params, function(error, tweets, response){
   if (!error) {
     console.log(tweets);
   }
