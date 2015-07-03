@@ -7,8 +7,14 @@ var client = new Twitter({
     access_token_secret: 'czQre16YZKoC4Csi18gGufu8PxF733aL5VnzbhurlGvHw'
 });
  
-var params = {};
-client.get('followers/list', params, function(error, tweets, response){
+// var params = {};
+// client.get('followers/list', params, function(error, tweets, response){
+//   if (!error) {
+//     console.log(tweets);
+//   }
+// });
+var params = {q:'rcb'};
+client.get('/search', params, function(error, tweets, response){
   if (!error) {
     console.log(tweets);
   }
