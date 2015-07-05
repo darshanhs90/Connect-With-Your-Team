@@ -16,7 +16,10 @@
 		"http":"0.0.x",
 		"alchemy-api":"1.2.x",
 		"sendgrid":"1.8.0",
-		"twilio":"2.2.1"
+		"twilio":"2.2.1",
+		"twit":"2.0.x",
+		"oauth":"0.9.x",
+		"node-bing-api":"2.0.x"
 	},
 	"repository": {}
 }

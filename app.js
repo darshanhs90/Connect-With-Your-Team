@@ -7,9 +7,10 @@
 var express = require('express');
 var request = require('request');
 var https = require('https');
-var http=require('http');
+var http = require('http');
 var cors = require('cors');
 var Twitter = require('twitter');
+var io = require('socket.io');
 var client = new Twitter({
     consumer_key: 'LmNp3JwAQZnuBr4SQFaM7UZG3',
     consumer_secret: 'Xps6ziqIhZ0exAPoIAeyqj7myu7L78ZLHQDni67dzD9koJQTAD',
@@ -26,25 +27,27 @@ var clientTwilio = require('twilio')(accountSid, authToken);
 var Twit = require('twit');
 
 var T = new Twit({
-   consumer_key: 'LmNp3JwAQZnuBr4SQFaM7UZG3',
+    consumer_key: 'LmNp3JwAQZnuBr4SQFaM7UZG3',
     consumer_secret: 'Xps6ziqIhZ0exAPoIAeyqj7myu7L78ZLHQDni67dzD9koJQTAD',
     access_token: '151128859-F4Wk8KebqH4ZDwp8tMWY8PkoTQzfiEJrN1t2Knfc',
     access_token_secret: 'czQre16YZKoC4Csi18gGufu8PxF733aL5VnzbhurlGvHw'
 })
 
-var OAuth = require('oauth').OAuth
-  , oauth = new OAuth(
-      "https://api.twitter.com/oauth/request_token",
-      "https://api.twitter.com/oauth/access_token",
-      "LmNp3JwAQZnuBr4SQFaM7UZG3",
-      "Xps6ziqIhZ0exAPoIAeyqj7myu7L78ZLHQDni67dzD9koJQTAD",
-      "1.0",
-      "oob",
-      "HMAC-SHA1"
+var OAuth = require('oauth').OAuth,
+    oauth = new OAuth(
+        "https://api.twitter.com/oauth/request_token",
+        "https://api.twitter.com/oauth/access_token",
+        "LmNp3JwAQZnuBr4SQFaM7UZG3",
+        "Xps6ziqIhZ0exAPoIAeyqj7myu7L78ZLHQDni67dzD9koJQTAD",
+        "1.0",
+        "http://nexmorecruiter.mybluemix.net",
+        "HMAC-SHA1"
     );
-  var xoauth;
+var xoauth;
 
-var Bing = require('node-bing-api')({ accKey: "l11l8D4FBj6XkyHh3NzeMINbdY+s19eUoxrRgvgQQgQ" });
+var Bing = require('node-bing-api')({
+    accKey: "l11l8D4FBj6XkyHh3NzeMINbdY+s19eUoxrRgvgQQgQ"
+});
 
 // cfenv provides access to your Cloud Foundry environment
 // for more info, see: https://www.npmjs.com/package/cfenv
@@ -61,8 +64,8 @@ app.use(express.static(__dirname + '/public'));
 var appEnv = cfenv.getAppEnv();
 
 // start server on the specified port and binding host
-app.listen(appEnv.port, appEnv.bind, function() {
-//app.listen(1337, '127.0.0.1', function() {
+//app.listen(appEnv.port, appEnv.bind, function() {
+app.listen(1337, '127.0.0.1', function() {
 
     // print a message when the server starts listening
     console.log("server starting on " + appEnv.url);
@@ -72,62 +75,69 @@ app.listen(appEnv.port, appEnv.bind, function() {
 
 //login modules start
 app.get('/auth/twitter', function(req, res) {
- 
-  oauth.getOAuthRequestToken(function(error, oauth_token, oauth_token_secret, results) {
-    if (error) {
-      console.log(error);
-      res.send("Authentication Failed!");
-    }
-    else {
-      xoauth = {
-        token: oauth_token,
-        token_secret: oauth_token_secret
-      };
-      console.log(xoauth);
-      res.redirect('https://twitter.com/oauth/authenticate?oauth_token='+oauth_token)
-    }
-  });
- 
+
+    oauth.getOAuthRequestToken(function(error, oauth_token, oauth_token_secret, results) {
+        if (error) {
+            console.log(error);
+            res.send("Authentication Failed!");
+        } else {
+            xoauth = {
+                token: oauth_token,
+                token_secret: oauth_token_secret
+            };
+            console.log(xoauth);
+            //res.addHeader("Access-Control-Allow-Origin", "*");
+            res.end('https://twitter.com/oauth/authenticate?oauth_token=' + oauth_token)
+        }
+    });
+
 });
 
 
-  app.get('/auth/twitter/callback', function(req, res, next) {
- 
-  if (xoauth) {
-    xoauth.verifier = 5744204;//req.query.oauth_verifier;
-    var oauth_data = xoauth;
- 
-    oauth.getOAuthAccessToken(
-      oauth_data.token,
-      oauth_data.token_secret,
-      oauth_data.verifier,
-      function(error, oauth_access_token, oauth_access_token_secret, results) {
-        if (error) {
-          console.log(error);
-          res.send("Authentication Failure!");
-        }
-        else {
-          xoauth.access_token = oauth_access_token;
-          xoauth.access_token_secret = oauth_access_token_secret;
-          console.log(results, req.session.oauth);
-          console.log('token');
+app.get('/auth/twitter/callback', function(req, res, next) {
 
-          console.log(oauth_access_token);
+    if (xoauth) {
+        xoauth.verifier = req.query.code; //req.query.oauth_verifier;
+        var oauth_data = xoauth;
+
+        oauth.getOAuthAccessToken(
+            oauth_data.token,
+            oauth_data.token_secret,
+            oauth_data.verifier,
+            function(error, oauth_access_token, oauth_access_token_secret, results) {
+                if (error) {
+                    console.log(error);
+                    res.end("Authentication Failure!");
+                } else {
+                    xoauth.access_token = oauth_access_token;
+                    xoauth.access_token_secret = oauth_access_token_secret;
+                    console.log(results, xoauth);
+                    client = new Twitter({
+                        consumer_key: 'LmNp3JwAQZnuBr4SQFaM7UZG3',
+                        consumer_secret: 'Xps6ziqIhZ0exAPoIAeyqj7myu7L78ZLHQDni67dzD9koJQTAD',
+                        access_token_key: oauth_access_token,
+                        access_token_secret: oauth_access_token_secret
+                    });
+
+                    T = new Twit({
+                        consumer_key: 'LmNp3JwAQZnuBr4SQFaM7UZG3',
+                        consumer_secret: 'Xps6ziqIhZ0exAPoIAeyqj7myu7L78ZLHQDni67dzD9koJQTAD',
+                        access_token: oauth_access_token,
+                        access_token_secret: oauth_access_token_secret
+                    })
+                    console.log('token');
+                    console.log(oauth_access_token);
                     console.log('token secret');
-            console.log(oauth_access_token_secret);
+                    console.log(oauth_access_token_secret);
+                    res.end("Authentication Successful");
+                    // res.redirect('/'); // You might actually want to redirect!
+                }
+            }
+        );
+    } else {
+        res.end("Authentication Failure"); // Redirect to login page
+    }
 
-
-
-          res.end("Authentication Successful");
-          // res.redirect('/'); // You might actually want to redirect!
-        }
-      }
-    );
-  }
-  else {
-    res.redirect('/login'); // Redirect to login page
-  }
- 
 });
 
 //login modules end
@@ -135,68 +145,74 @@ app.get('/auth/twitter', function(req, res) {
 //********************//
 //stream tweets based on location and topic
 
-var sanFrancisco = [ '-122.75', '36.8', '-121.75', '37.8' ]
+var sanFrancisco = ['-122.75', '36.8', '-121.75', '37.8']
+app.get('/twit/stream', function(req, res) {
+    var stream = T.stream('statuses/filter', {
+        locations: sanFrancisco
+    })
 
-var stream = T.stream('statuses/filter', {locations:sanFrancisco})
-
-stream.on('tweet', function (tweet) {
-    var x=tweet.text.toString().toLowerCase();
-    if(x.indexOf("ca") > -1){
-        console.log('*****************');
-  console.log(tweet);
-  console.log(tweet.text);
-        console.log('*****************');
-  }
-  else{
-    //console.log(tweet.text);
-  }
-})
-
+    stream.on('tweet', function(tweet) {
+        var x = tweet.text.toString().toLowerCase();
+        if (x.indexOf("ca") > -1) {
+            console.log('*****************');
+            console.log(tweet);
+            console.log(tweet.text);
+            console.log('*****************');
+        } else {
+            //console.log(tweet.text);
+        }
+    })
+});
 //****************//
 //stream based on topic alone
-client.stream('statuses/filter', {track: 'federer'}, function(stream) {
-  stream.on('data', function(tweet) {
-    console.log(tweet.text);
-    console.log(tweet.location);
-    console.log(tweet);
+app.get('/twitter/stream', function(req, res) {
+    client.stream('statuses/filter', {
+        track: 'federer'
+    }, function(stream) {
+        stream.on('data', function(tweet) {
+            console.log(tweet.text);
+            console.log(tweet.location);
+            console.log(tweet);
 
-     alchemy.keywords(tweet.text, {}, function(err, response) {
+            alchemy.keywords(tweet.text, {}, function(err, response) {
+                if (err) throw err;
+
+                // See http://www.alchemyapi.com/api/keyword/htmlc.html for format of returned object
+                var keywords = response.keywords;
+                console.log('keywords');
+                console.log(keywords);
+                // Do something with data
+            });
+        });
+
+        stream.on('error', function(error) {
+            console.log(error);
+            throw error;
+        });
+    });
+});
+//****************//
+//get followers list
+app.get('/twitter/followers', function(req, res) {
+    var params = {};
+    client.get('followers/list', params, function(error, tweets, response) {
+        if (!error) {
+            console.log(tweets);
+        }
+    });
+});
+//**************//
+//get keywords
+app.get('/tweet/keywords', function(req, res) {
+    alchemy.keywords('', {}, function(err, response) {
         if (err) throw err;
 
         // See http://www.alchemyapi.com/api/keyword/htmlc.html for format of returned object
         var keywords = response.keywords;
-        console.log('keywords');
-            console.log(keywords);
-         // Do something with data
-        });
-         });
- 
-  stream.on('error', function(error) {
-    console.log(error);
-    throw error;
-  });
+
+        // Do something with data
+    });
 });
-
-//****************//
-//get followers list
-var params = {};
-client.get('followers/list', params, function(error, tweets, response){
-  if (!error) {
-    console.log(tweets);
-  }
-});
-
-//**************//
-//get keywords
-alchemy.keywords('', {}, function(err, response) {
-  if (err) throw err;
-
-  // See http://www.alchemyapi.com/api/keyword/htmlc.html for format of returned object
-  var keywords = response.keywords;
-
-  // Do something with data
-});
-
 //*************//
 //Bing search
 
@@ -251,13 +267,10 @@ alchemy.keywords('', {}, function(err, response) {
 
 
 
-
-
-
 app.use('/twitterSentiment', function(reqst, respns) {
 
     //get companyname from request
-    var companyName=reqst.query.companyName;
+    var companyName = reqst.query.companyName;
     client.get('search/tweets', {
         q: companyName
     }, function(error, tweets, response) {
@@ -270,7 +283,7 @@ app.use('/twitterSentiment', function(reqst, respns) {
         (tweets.statuses).forEach(function(e) {
             var text = e.text;
 
-            console.log('text is '+text);
+            console.log('text is ' + text);
             //if(count<15)
             alchemy.sentiment(text, {}, function(err, response) {
                 if (err)
@@ -281,40 +294,33 @@ app.use('/twitterSentiment', function(reqst, respns) {
                 //asd=sentiment;
                 //res.send(asd);
                 //if(!isNaN(sentiment)){
-                    count=count+1;
-                    console.log(count);
-                if(typeof(sentiment)!=="undefined"){
-                if(typeof(sentiment.score)!=="undefined"){
-                    total =total+ parseFloat(sentiment.score);
-                console.log('total is '+total);
-                if(total>1||total<-1)
-                    respns.end(total.toString());
-                }
+                count = count + 1;
+                console.log(count);
+                if (typeof(sentiment) !== "undefined") {
+                    if (typeof(sentiment.score) !== "undefined") {
+                        total = total + parseFloat(sentiment.score);
+                        console.log('total is ' + total);
+                        if (total > 1 || total < -1)
+                            respns.end(total.toString());
+                    }
                 }
             });
-            });
-        
+        });
+
     });
 });
 
-app.get('/twitterInsight',function(reqst,respns){
+app.get('/twitterInsight', function(reqst, respns) {
 
 
- alchemy.sentiment(textval, {}, function(err, response) {
-                if (err)
-                    throw err;
-                var sentiment = response.docSentiment;
-                console.log(sentiment);
-                //asd=sentiment;
-                //res.send(asd);
-                respns.end(JSON.stringify(sentiment));
-            });
+    alchemy.sentiment(textval, {}, function(err, response) {
+        if (err)
+            throw err;
+        var sentiment = response.docSentiment;
+        console.log(sentiment);
+        //asd=sentiment;
+        //res.send(asd);
+        respns.end(JSON.stringify(sentiment));
+    });
 
 });
-
-
-
-
-
-
-
