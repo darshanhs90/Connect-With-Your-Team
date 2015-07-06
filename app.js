@@ -9,9 +9,9 @@ var express=require('express');
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var ahttp = require('http');
-if (process.env.NODE_ENV !== 'production'){
- longjohn= require('longjohn');
-}
+//if (process.env.NODE_ENV !== 'production'){
+var longjohn= require('longjohn');
+//}
 longjohn.async_trace_limit = -1;  // unlimited
 var request = require('request');
 var https = require('https');
