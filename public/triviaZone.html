@@ -51,7 +51,7 @@
                     <a href="followersMap.html">Followers Map</a>
                 </li>
                 <li>
-                    <a href="triviaZone.html">Trivia Zone</a>
+                    <a href="triviaZone.html">Fan Zone</a>
                 </li>
                 <li>
                     <a href="twitterNews.html">Twitter News</a>
@@ -68,27 +68,74 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h1>Post a trivia</h1>
-
                         <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-12">
-                       <h1>Track Progress/Get Trivia Winner</h1>
-               
+                        <h3>Post a trivia</h3>
+                        <textarea rows="4" cols="40" ng-model="trivia"></textarea>
+                        <button class="btn btn-info" ng-click="triviapost()" ng-show="trivia!=''"> Post Trivia</button>
+                        <button class="btn btn-info" ng-click="random()"> Post Random Trivia</button>
+                        
+                    </div>
+                </div>
+                <hr/>
+                <div class="row">
+                    <div class="col-lg-12">
+                       <h5> Get Trivia Winner</h5>
+                        <p><button class="btn btn-success" ng-click="getWinner()">Get Winner</button>
+                       <div ng-show="winner!=''">
+                            <img src="{{winner.user.profile_image_url}}" style="border-radius:25px;">
+                            {{winner.user.screen_name}}
+                         </div> 
+                         <span ng-show="winner==''"> No Trivia Winner Yet</span>
+                          </p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-12">
-                        <h1>Get Months Die Hard follower</h1>
-                       
+                        <h5> Pick Lucky New Follower</h5>
+                        <p><button class="btn btn-success" ng-click="getFollower()">Get Follower</button>
+                        <div>
+                            <img src="{{follower.profile_image_url}}" style="border-radius:25px;">
+                            {{follower.screen_name}}
+                         </div>   
+
+                       </p>
                     </div>
                 </div>
                  <div class="row">
                     <div class="col-lg-12">
-                        <h1>Get Most Retweeted post on page to help out</h1>
-                        
+                        <h5>Get Most Retweeted post</h5>
+                        <p><button class="btn btn-success" ng-click="getRetweeter()">Get Most Retweeted Post</button>
+                        <div>
+                            <img src="{{retweeter.user.profile_image_url}}" style="border-radius:25px;">
+                            {{retweeter.user.screen_name}}
+                         </div>  
+                    </div>
+                </div>
+                 <div class="row">
+                    <div class="col-lg-12">
+                        <h5>Get Best post</h5>
+                        <p><button class="btn btn-success" ng-click="getBest()">Get Best Post</button>
+                        <div>
+                            <img src="{{best.user.profile_image_url}}" style="border-radius:25px;">
+                            {{best.user.screen_name}}
+                         </div>  
+
+                      </p> 
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h5>Help Out a Random Fan</h5>
+                        <p><button class="btn btn-success" ng-click="getHelp()">Help a Fan</button>
+                        <div>
+                            <img src="{{help.user.profile_image_url}}" style="border-radius:25px;">
+                            {{help.user.screen_name}}
+                         </div>  
+                       </p> 
                     </div>
                 </div>
             </div>
@@ -103,7 +150,8 @@
 
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
-
+    <script src="assets/js/angular.min.js"></script>
+    <script src="assets/js/triviaZone-angular.js"></script>
     <!-- Menu Toggle Script -->
     <script>
     $("#menu-toggle").click(function(e) {

@@ -27,7 +27,7 @@ var Twitter1 = require('node-tweet-stream'),
     });
 var watson = require('watson-developer-cloud');
 var AlchemyAPI = require('alchemy-api');
-var alchemy = new AlchemyAPI('7b6bf4773c39c9e271f6bd999fea5df5179a6dad');
+var alchemy = new AlchemyAPI('0554d03cab53ef907d02d27eaea5c2938b471ef1');
 var sendgrid = require('sendgrid')('hsdars', 'Password90-');
 var accountSid = 'AC07275e4294f1b0d42623c3ec9559911e';
 var authToken = '650d049a9bd99323fb899ce4b9e84fcc';
@@ -78,7 +78,8 @@ server.listen(1337, '127.0.0.1', function() {
     console.log("server starting on " + appEnv.url);
 });
 
-
+var winner;
+var retweeter;
 var followersList='';
 //login modules start
 app.get('/auth/twitter', function(req, res) {
@@ -430,6 +431,48 @@ app.get('/getScore', function(req, res) {
     res.end();
 });
 
+app.get('/getWinner',function(req,res){
+
+res.send(winner);
+res.end();
+});
+
+
+app.get('/getsentimentWinner',function(req,res){
+
+res.send(sentimentWinner);
+res.end();
+});
+
+app.get('/getretweetWinner',function(req,res){
+
+res.send(retweetWinner);
+res.end();
+});
+
+app.get('/getrandomWinner',function(req,res){
+
+res.send(randomWinner);
+res.end();
+});
+
+app.get('/postUpdate',function(req,res){
+    var stat=req.query.status;
+    console.log(req.query);
+    client.post('statuses/update', {status: stat},  function(error, tweet, response){
+  if(error) throw error;
+  console.log(tweet);  // Tweet body. 
+  console.log(response);  // Raw response object. 
+  res.send('1');
+  res.end();
+});
+})
+
+var prevRetweet=0;
+var prevSentiment=0;
+var sentimentWinner;
+var retweetWinner;
+var randomWinner;
 io.on('connection', function(socket) {
     x = 0;
     console.log('connected');
@@ -441,6 +484,41 @@ io.on('connection', function(socket) {
         tw.track('#twitter');
         tw.on('tweet', function(tweet) {
             //console.log(tweet.text);
+            if(tweet.text.indexOf('answer')>0)
+                winner=tweet;
+            if(tweet.retweet_count>=prevRetweet)
+            {
+                retweetWinner=tweet;
+                prevRetweet=tweet.retweet_count;
+            }
+            //text='hi how are you doind'
+            var txtval=tweet.text;
+            console.log(tweet.text);
+             alchemy.sentiment(txtval, {}, function(err, response) {
+            if (err)
+                throw err;
+            var sentiment = response.docSentiment;
+            console.log(sentiment);
+            if(sentiment!=undefined && sentiment.score!=undefined && parseFloat(sentiment.score)>=prevSentiment)
+            {
+                prevSentiment=parseFloat(sentiment.score);
+                sentimentWinner=tweet;
+            }
+            else{
+                sentimentWinner=tweet;
+            }
+           });
+
+             if(x%21==0)
+             {
+                randomWinner=tweet;
+             }
+             x++;
+
+
+
+
+
             if (locn == 0) {
                 //x++;
                 //console.log(tweet.text);
