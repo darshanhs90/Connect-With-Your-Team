@@ -475,15 +475,16 @@ client.get('statuses/user_timeline', params, function(error, tweets, response){
 
 app.get('/news',function(req,respns){
 
-var val=req.query.val;
-var tweet=timeline[val].text.toString();
+ var val=req.query.val;
+ var tweet=timeline[val].text.toString();
+
   alchemy.keywords(tweet, {}, function(err, response) {
         if (err) throw err;
 
         // See http://www.alchemyapi.com/api/keyword/htmlc.html for format of returned object
         var keywords = response.keywords;
         console.log(keywords);
-        if(keywords.length>1)
+        if(keywords==undefined||keywords.length>1)
             keywords='Royal challengers Bangalore';
         Bing.news(keywords, {
     top: 10,  // Number of results (max 50) 
@@ -511,7 +512,7 @@ app.get('/images',function(reqst,respns){
 
 Bing.images("Royal challengers Bangalore", {skip: 10}, function(error, res, body){
   console.log(body);
-  respns.send(body);
+  respns.send(body.d.results);
   respns.end();
 });  
 });
@@ -523,7 +524,7 @@ Bing.web("Royal challengers Bangalore", {
     skip: 3,   // Skip first 3 results
   }, function(error, res, body){
     console.log(body);
-    respns.send(body);
+    respns.send(body.d.results);
     respns.end();
   });
 
