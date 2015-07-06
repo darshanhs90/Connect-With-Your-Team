@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Simple Sidebar - Start Bootstrap Template</title>
+    <title>Twitnect</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -68,12 +68,25 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h1>Merchandise details</h1>
-
                         <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
                     </div>
                 </div>
-                
+                <div class="row">
+                    <div class="col-lg-12">
+                       <h5>Ask For Help</h5>
+                       <textarea cols="40" rows="3" ng-model="txt1" style="border-radius:10px;"></textarea>
+                       <br>
+                       <button class="btn btn-info" ng-show="txt1!='Ask for Help Here'" ng-click="gethelp()" >Get Help from the Team</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h5>Ask a Question</h5>
+                       <textarea cols="40" rows="3" ng-model="txt2" style="border-radius:10px;">Enter text here</textarea>
+                       <br>
+                       <button class="btn btn-info" ng-show="txt2!='Ask a Qn Here'" ng-click="getquestion()" >Ask a Question to the Team</button>
+                    </div>
+                </div>
             </div>
         </div>
         <!-- /#page-content-wrapper -->

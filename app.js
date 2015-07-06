@@ -592,7 +592,27 @@ io.on('connection', function(socket) {
              }
              x++;
 
+             if(tweet.text.indexOf("help")>1){
 
+                var tweetId = tweet.id;
+                client.post('statuses/retweet/' + tweetId, function(error, tweet, response){
+                if (!error) {
+                    console.log('retweeted');
+                    console.log(tweet);
+                     }
+                });
+             }
+             if(tweet.text.indexOf("question")>1){
+
+                var tweetId = tweet.user.screen_name;
+                var stat="@"+tweetId+' .Thanks for the Question.Your question will be answered shortly';
+                client.post('statuses/update', {status: stat},  function(error, tweet, response){
+                if(error) throw error;
+                     // console.log(tweet);  // Tweet body. 
+                     //console.log(response);  // Raw response object. 
+ 
+                });
+             }
 
 
 
