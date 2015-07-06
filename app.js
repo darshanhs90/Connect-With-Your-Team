@@ -501,7 +501,7 @@ app.get('/news',function(req,respns){
                                 //   rt_ScienceAndTechnology 
   }, function(error, res, body){
    // console.log(body.d.results);
-    respns.send(body);
+    respns.send(body.d.results);
     respns.end();
   });
         // Do something with data
