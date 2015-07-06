@@ -19,7 +19,7 @@ $scope.getNews=function($val){
     params:{val:$val}
  })
                     .success(function(data, status, headers, config) {
-                    	//console.log(data);
+                    	console.log(data);
                     	$scope.news=data;
 
 //get images
@@ -29,7 +29,7 @@ $scope.getNews=function($val){
  })
                     .success(function(data, status, headers, config) {
 
-                    	//console.log(data);
+                    	console.log(data);
                     	$scope.images=data;
 
 
