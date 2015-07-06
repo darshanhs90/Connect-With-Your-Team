@@ -137,9 +137,12 @@
         </div>
                     </div>
                     <div class="col-lg-6">
-                       {{location}}
-                       //get continent name
-                       //get what people are thinking using sentiment score
+                       <Button ng-click="getScore()" class="btn btn-success">
+                        Get Sentiment score from {{location}}
+                       </Button>
+                       <br>
+                       Score:{{score}}
+                       <br>
                         <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
                     </div>
                 </div>

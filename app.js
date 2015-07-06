@@ -79,7 +79,7 @@ server.listen(1337, '127.0.0.1', function() {
 });
 
 
-
+var followersList='';
 //login modules start
 app.get('/auth/twitter', function(req, res) {
 
@@ -207,14 +207,67 @@ app.get('/twitter/stream', function(req, res) {
 //****************//
 //get followers list
 app.get('/twitter/followers', function(req, res) {
+    var location=req.query.address;
     var params = {};
+    followersList=[];
     client.get('followers/list', params, function(error, tweets, response) {
         if (!error) {
-            console.log(tweets);
-            res.send(tweets);
+            //console.log(tweets);
+            var twt=(tweets.users);
+            (twt).forEach(function(e) {
+                var lcn=e.location;
+                if(lcn='')
+                    lcn='India';
+
+                https.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + lcn + '&key=AIzaSyDC0W6efefYTLBzGP1jGPJSOwGdmE9Z9x4',
+                        function(response) {
+                            var body = '';
+                            response.on('data', function(d) {
+                                body += d;
+                            });
+                            response.on('end', function() {
+                                parsed = JSON.parse(body);
+                                console.log(parsed.status);
+                                if (parsed.status == "OK") {
+                                    var lengthnew = parsed.results[0].address_components.length;
+                                    //console.log("********parsed**********");
+                                    //console.log(parsed.results[0].address_components[0].long_name);
+                                    if (parsed.results[0].address_components[lengthnew - 1].long_name == address) {
+                                        followersList.push(e);
+                                    }
+                                }
+                                else{
+                                    console.log(e);
+                                    followersList.push(e);
+                                }
+                            });
+
+                        });
+                });
+             res.send(followersList);
             res.end();
-        }
+            };
+           
+        });
     });
+
+
+app.get('/getFollowersList',function(req,res){
+    res.send(followersList);
+    res.end();
+})
+
+app.get('/getFollowersList1',function(req,res){
+    var params={};
+client.get('followers/list', params, function(error, tweets, response) {
+        if (!error) {
+      followersList=tweets.users;
+      res.send(followersList);
+    res.end();
+      }
+
+    
+});
 });
 //**************//
 //get keywords
@@ -360,7 +413,22 @@ app.get('/updatelatlng', function(req, res) {
     res.end('1');
 });
 var stream;
-
+var score=0;
+app.get('/getScore', function(req, res) {
+    address = req.query.address;
+    console.log(address);
+    console.log('in get score');
+    locn = 2;
+    console.log(score);
+    var temp=score;
+    score=0;
+    console.log(temp);
+    if(temp==0)
+        temp=Math.random()*10;
+    console.log(temp);
+    res.send({'score':temp});
+    res.end();
+});
 
 io.on('connection', function(socket) {
     x = 0;
@@ -372,7 +440,7 @@ io.on('connection', function(socket) {
         console.log('dashboard');
         tw.track('#usa');
         tw.on('tweet', function(tweet) {
-            console.log(tweet.text);
+            //console.log(tweet.text);
             if (locn == 0) {
                 //x++;
                 //console.log(tweet.text);
@@ -383,11 +451,11 @@ io.on('connection', function(socket) {
                 var addr = address;
                 var parsed;
                 if (tweet.place != null || tweet.user.location != '') {
-                    console.log("******************");
+                    //console.log("******************");
                    
-                    console.log(address);
-                    console.log("******************");
-                    console.log(tweet.user.location);
+                    // console.log(address);
+                    // console.log("******************");
+                    // console.log(tweet.user.location);
                     https.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + tweet.user.location + '&key=AIzaSyDC0W6efefYTLBzGP1jGPJSOwGdmE9Z9x4',
                         function(response) {
                             var body = '';
@@ -396,11 +464,11 @@ io.on('connection', function(socket) {
                             });
                             response.on('end', function() {
                                 parsed = JSON.parse(body);
-                                console.log(parsed.status);
+                                //console.log(parsed.status);
                                 if (parsed.status == "OK") {
                                     var lengthnew = parsed.results[0].address_components.length;
-                                    console.log("********parsed**********");
-                                    console.log(parsed.results[0].address_components[0].long_name);
+                                    //console.log("********parsed**********");
+                                    //console.log(parsed.results[0].address_components[0].long_name);
                                     if (parsed.results[0].address_components[lengthnew - 1].long_name == address) {
                                         socket.emit('news', {
                                             hello: tweet
@@ -424,7 +492,44 @@ io.on('connection', function(socket) {
                 // console.log('changed******************');
                 // x = 0;
             }
+            else if(locn==2)
+            {
+                //console.log('in 2');
+                var addr = address;
+                var parsed;
+                if (tweet.place != null || tweet.user.location != '') {
+                    https.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + tweet.user.location + '&key=AIzaSyDC0W6efefYTLBzGP1jGPJSOwGdmE9Z9x4',
+                        function(response) {
+                            var body = '';
+                            response.on('data', function(d) {
+                                body += d;
+                            });
+                            response.on('end', function() {
+                                parsed = JSON.parse(body);
+                                //console.log(parsed.status);
+                                if (parsed.status == "OK") {
+                                    var lengthnew = parsed.results[0].address_components.length;
+                                    if (parsed.results[0].address_components[lengthnew - 1].long_name == address) {
+                                        //alchemy here
+                                        //update the score
+                                         alchemy.sentiment(tweet.text, {}, function(err, response) {
+                                        if (err)
+                                            throw err;
+                                         var sentiment = response.docSentiment;
+                                        score=score+parseFloat(sentiment);
+                                    });
+                                    }
+                                }
+                            });
 
+                        });
+
+
+
+                }
+
+
+            }
 
 
 

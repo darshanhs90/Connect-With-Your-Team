@@ -2,7 +2,15 @@ var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope, $http) {
     $scope.lat = 'No Latitude chosen';
     $scope.lng = 'No Longitude chosen';
-    
+            $http({
+                    url: 'http://localhost:1337/getFollowersList1',
+                    method: "GET"
+                }).success(function(data, status, headers, config) {
+                    console.log(data);
+                    $scope.followersList=data;
+
+                });
+
 
 
         var bounds = [
@@ -36,4 +44,43 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.lng = lng;
         });
     };
+    $scope.location='No Location Chosen';
+    $scope.getFollowers=function(){
+
+                $http({
+                    url: 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+$scope.lat+','+$scope.lng.F+'&key=AIzaSyDC0W6efefYTLBzGP1jGPJSOwGdmE9Z9x4',
+                    method: "GET"
+                }).success(function(data, status, headers, config) {
+                        console.log(data);
+                        if(data.status=="OK"){
+                        $scope.location=data;
+                        var length=$scope.location.results.length;
+                        locn=($scope.location.results[length-1].formatted_address);
+                        console.log('after');
+                        }
+                    $http({
+                    url: 'http://localhost:1337/twitter/followers',
+                    method: "GET",
+                    params:{
+                        address:$scope.location
+                    }
+                }).success(function(data, status, headers, config) {
+                    console.log(data);
+                    setTimeout(function(){
+                    $http({
+                    url: 'http://localhost:1337/getFollowersList',
+                    method: "GET"
+                }).success(function(data, status, headers, config) {
+                    console.log(data);
+                    $scope.followersList=data;
+                });
+
+                    },1000);
+
+
+                });
+                });
+
+
+    }
 });
