@@ -71,8 +71,8 @@ app.use(cors());
 var appEnv = cfenv.getAppEnv();
 
 // start server on the specified port and binding host
-//app.listen(appEnv.port, appEnv.bind, function() {
-server.listen(1337, '127.0.0.1', function() {
+server.listen(appEnv.port, appEnv.bind, function() {
+//server.listen(1337, '127.0.0.1', function() {
 
     // print a message when the server starts listening
     console.log("server starting on " + appEnv.url);
