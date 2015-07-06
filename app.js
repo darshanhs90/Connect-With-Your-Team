@@ -500,7 +500,7 @@ var tweet=timeline[val].text.toString();
                                 //   rt_ScienceAndTechnology 
   }, function(error, res, body){
    // console.log(body.d.results);
-    respns.send(body.d.results);
+    respns.send(body);
     respns.end();
   });
         // Do something with data
@@ -511,7 +511,7 @@ app.get('/images',function(reqst,respns){
 
 Bing.images("Royal challengers Bangalore", {skip: 10}, function(error, res, body){
   console.log(body);
-  respns.send(body.d.results);
+  respns.send(body);
   respns.end();
 });  
 });
@@ -523,7 +523,7 @@ Bing.web("Royal challengers Bangalore", {
     skip: 3,   // Skip first 3 results
   }, function(error, res, body){
     console.log(body);
-    respns.send(body.d.results);
+    respns.send(body);
     respns.end();
   });
 
