@@ -219,7 +219,7 @@ app.get('/twitter/followers', function(req, res) {
                 if(lcn='')
                     lcn='India';
 
-                https.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + lcn + '&key=AIzaSyDC0W6efefYTLBzGP1jGPJSOwGdmE9Z9x4',
+                https.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + lcn + '&key=AIzaSyDWUnMGxYQzaDMTJSkH8btb4oJnLVGo178',
                         function(response) {
                             var body = '';
                             response.on('data', function(d) {
@@ -438,7 +438,7 @@ io.on('connection', function(socket) {
     });
     socket.on('dashboard', function(data) {
         console.log('dashboard');
-        tw.track('#usa');
+        tw.track('#twitter');
         tw.on('tweet', function(tweet) {
             //console.log(tweet.text);
             if (locn == 0) {
@@ -456,7 +456,7 @@ io.on('connection', function(socket) {
                     // console.log(address);
                     // console.log("******************");
                     // console.log(tweet.user.location);
-                    https.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + tweet.user.location + '&key=AIzaSyDC0W6efefYTLBzGP1jGPJSOwGdmE9Z9x4',
+                    https.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + tweet.user.location + '&key=AIzaSyDWUnMGxYQzaDMTJSkH8btb4oJnLVGo178',
                         function(response) {
                             var body = '';
                             response.on('data', function(d) {
@@ -474,6 +474,16 @@ io.on('connection', function(socket) {
                                             hello: tweet
                                         });
                                     }
+                                    else{
+                                        socket.emit('news', {
+                                            hello: tweet
+                                        });
+                                    }
+                                }
+                                else{
+                                    socket.emit('news', {
+                                            hello: tweet
+                                        });
                                 }
                             });
 
@@ -498,7 +508,7 @@ io.on('connection', function(socket) {
                 var addr = address;
                 var parsed;
                 if (tweet.place != null || tweet.user.location != '') {
-                    https.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + tweet.user.location + '&key=AIzaSyDC0W6efefYTLBzGP1jGPJSOwGdmE9Z9x4',
+                    https.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + tweet.user.location + '&key=AIzaSyDWUnMGxYQzaDMTJSkH8btb4oJnLVGo178',
                         function(response) {
                             var body = '';
                             response.on('data', function(d) {

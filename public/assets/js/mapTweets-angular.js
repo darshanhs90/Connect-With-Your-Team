@@ -99,7 +99,7 @@ app.controller('myCtrl', function($scope, $http) {
                 
 
                 $http({
-                    url: 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+$scope.latLng.A+','+$scope.latLng.F+'&key=AIzaSyDC0W6efefYTLBzGP1jGPJSOwGdmE9Z9x4',
+                    url: 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+$scope.latLng.A+','+$scope.latLng.F+'&key=AIzaSyDWUnMGxYQzaDMTJSkH8btb4oJnLVGo178',
                     method: "GET"
                 }).success(function(data, status, headers, config) {
                         console.log(data);

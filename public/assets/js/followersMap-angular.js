@@ -47,8 +47,8 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.location='No Location Chosen';
     $scope.getFollowers=function(){
 
-                $http({
-                    url: 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+$scope.lat+','+$scope.lng.F+'&key=AIzaSyDC0W6efefYTLBzGP1jGPJSOwGdmE9Z9x4',
+                $http({                                                                                         
+                    url: 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+$scope.lat+','+$scope.lng.F+'&key=AIzaSyDWUnMGxYQzaDMTJSkH8btb4oJnLVGo178',
                     method: "GET"
                 }).success(function(data, status, headers, config) {
                         console.log(data);
