@@ -3,7 +3,7 @@ app.controller('myCtrl',function($scope,$http,$sce) {
 
 
 $http({
-    url: 'http://localhost:1337/timeline', 
+    url: 'http://fantweet.mybluemix.net/timeline', 
     method: "GET"
  })
                     .success(function(data, status, headers, config) {
@@ -14,7 +14,7 @@ $http({
 $scope.getNews=function($val){
 	console.log($val);
 	$http({
-    url: 'http://localhost:1337/news', 
+    url: 'http://fantweet.mybluemix.net/news', 
     method: "GET",
     params:{val:$val}
  })
@@ -24,7 +24,7 @@ $scope.getNews=function($val){
 
 //get images
 	$http({
-    url: 'http://localhost:1337/images', 
+    url: 'http://fantweet.mybluemix.net/images', 
     method: "GET"
  })
                     .success(function(data, status, headers, config) {
@@ -36,7 +36,7 @@ $scope.getNews=function($val){
 
 
                     	$http({
-    url: 'http://localhost:1337/videos', 
+    url: 'http://fantweet.mybluemix.net/videos', 
     method: "GET"
  })
                     .success(function(data, status, headers, config) {

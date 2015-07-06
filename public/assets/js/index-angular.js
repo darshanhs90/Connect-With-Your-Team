@@ -6,7 +6,7 @@ app.controller('myCtrl',function($scope,$http) {
 $scope.login=function(){
 	alert('login');
 $http({
-    url: 'http://localhost:1337/auth/twitter', 
+    url: 'http://fantweet.mybluemix.net/auth/twitter', 
     method: "GET"
  }).success(function(data, status, headers, config) {
  	var res=(data);
@@ -21,7 +21,7 @@ $scope.authorize=function(){
 	alert('login');
 	if($scope.code!=''){
 $http({
-    url: 'http://localhost:1337/auth/twitter/callback', 
+    url: 'http://fantweet.mybluemix.net/auth/twitter/callback', 
     method: "GET",
     params:{code:$scope.code}
  }).success(function(data, status, headers, config) {

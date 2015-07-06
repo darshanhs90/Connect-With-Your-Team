@@ -4,7 +4,7 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.latLng2 = 'aasd';
 
 
-  var socket = io.connect('http://localhost:1337');
+  var socket = io.connect('http://fantweet.mybluemix.net');
                 socket.on('connection1', function(data) {
                 console.log('connection');
                 socket.emit('dashboard', {
@@ -107,7 +107,7 @@ app.controller('myCtrl', function($scope, $http) {
                         var length=$scope.location.results.length;
                         locn=($scope.location.results[length-1].formatted_address);
                     $http({
-                    url: 'http://localhost:1337/updatelatlng',
+                    url: 'http://fantweet.mybluemix.net/updatelatlng',
                     method: "GET",
                     params:{
                         address:locn

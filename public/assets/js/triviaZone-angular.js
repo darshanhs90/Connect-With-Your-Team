@@ -7,7 +7,7 @@ $scope.trivia='';
 $scope.triviapost=function(){
 
 $http({
-    url: 'http://localhost:1337/postUpdate', 
+    url: 'http://fantweet.mybluemix.net/postUpdate', 
     method: "GET",
     params:{status:$scope.trivia}
  })
@@ -21,7 +21,7 @@ $http({
 $scope.random=function(){
 
 $http({
-    url: 'http://localhost:1337/postUpdate', 
+    url: 'http://fantweet.mybluemix.net/postUpdate', 
     method: "GET",
     params:{status:'When did I Debut'}
  })
@@ -35,7 +35,7 @@ $http({
 
 
 $scope.getWinner=function(){
-$http.get('http://localhost:1337/getWinner',{})
+$http.get('http://fantweet.mybluemix.net/getWinner',{})
                     .success(function(data, status, headers, config) {
                     	console.log(data);
                     	$scope.winner=data;
@@ -44,7 +44,7 @@ $http.get('http://localhost:1337/getWinner',{})
 }
 
 $scope.getFollower=function(){
-$http.get('http://localhost:1337/getFollowersList1',{})
+$http.get('http://fantweet.mybluemix.net/getFollowersList1',{})
                     .success(function(data, status, headers, config) {
                     	$scope.tempData=data;
                     	var x=parseInt(Math.random()*10);
@@ -54,7 +54,7 @@ $http.get('http://localhost:1337/getFollowersList1',{})
 }
 
 $scope.getRetweeter=function(){
-$http.get('http://localhost:1337/getretweetWinner',{})
+$http.get('http://fantweet.mybluemix.net/getretweetWinner',{})
                     .success(function(data, status, headers, config) {
                     	console.log(data);
                     	$scope.retweeter=data;
@@ -63,7 +63,7 @@ $http.get('http://localhost:1337/getretweetWinner',{})
 }
 
 $scope.getBest=function(){
-$http.get('http://localhost:1337/getsentimentWinner',{})
+$http.get('http://fantweet.mybluemix.net/getsentimentWinner',{})
                     .success(function(data, status, headers, config) {
                     	console.log(data);
                     	$scope.best=data;
@@ -72,7 +72,7 @@ $http.get('http://localhost:1337/getsentimentWinner',{})
 }
 
 $scope.getHelp=function(){
-$http.get('http://localhost:1337/getrandomWinner',{})
+$http.get('http://fantweet.mybluemix.net/getrandomWinner',{})
                     .success(function(data, status, headers, config) {
                     	console.log(data);
                     	$scope.help=data;

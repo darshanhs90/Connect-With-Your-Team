@@ -2,7 +2,7 @@ var app=angular.module('myApp',[]);
 app.controller('myCtrl',function($scope,$http) {
 $scope.list=[];
 $scope.suggestions='';
-$http.get('http://localhost:1337/getSuggestions',{})
+$http.get('http://fantweet.mybluemix.net/getSuggestions',{})
                     .success(function(data, status, headers, config) {
 
                     	$scope.suggestions=data;
@@ -16,7 +16,7 @@ $http.get('http://localhost:1337/getSuggestions',{})
 
 
 
-var socket = io.connect('http://localhost:1337');
+var socket = io.connect('http://fantweet.mybluemix.net');
 socket.on('connection1',function(data){
 console.log('connection');
 socket.emit('dashboard',{my:'asd'});

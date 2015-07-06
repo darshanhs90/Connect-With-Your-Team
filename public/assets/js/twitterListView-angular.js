@@ -4,7 +4,7 @@ app.controller('myCtrl',function($scope,$http) {
 
 
 $http({
-    url: 'http://localhost:1337/getFollowersList', 
+    url: 'http://fantweet.mybluemix.net/getFollowersList', 
     method: "GET"
  })
                     .success(function(data, status, headers, config) {
@@ -12,7 +12,7 @@ $http({
                     	if(data=='')
                     	{
                     		$http({
-    url: 'http://localhost:1337/getFollowersList1', 
+    url: 'http://fantweet.mybluemix.net/getFollowersList1', 
     method: "GET"
  })
                     .success(function(data, status, headers, config) {

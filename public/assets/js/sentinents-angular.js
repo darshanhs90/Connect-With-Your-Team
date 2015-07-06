@@ -141,7 +141,7 @@ var current_code='in';
 
     $scope.getScore=function(){
         $http({
-                    url: 'http://localhost:1337/getScore',
+                    url: 'http://fantweet.mybluemix.net/getScore',
                     method: "GET",
                     params:{address:$scope.location},
                 }).success(function(data, status, headers, config) {

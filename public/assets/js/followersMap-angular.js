@@ -3,7 +3,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.lat = 'No Latitude chosen';
     $scope.lng = 'No Longitude chosen';
             $http({
-                    url: 'http://localhost:1337/getFollowersList1',
+                    url: 'http://fantweet.mybluemix.net/getFollowersList1',
                     method: "GET"
                 }).success(function(data, status, headers, config) {
                     console.log(data);
@@ -59,7 +59,7 @@ app.controller('myCtrl', function($scope, $http) {
                         console.log('after');
                         }
                     $http({
-                    url: 'http://localhost:1337/twitter/followers',
+                    url: 'http://fantweet.mybluemix.net/twitter/followers',
                     method: "GET",
                     params:{
                         address:$scope.location
@@ -68,7 +68,7 @@ app.controller('myCtrl', function($scope, $http) {
                     console.log(data);
                     setTimeout(function(){
                     $http({
-                    url: 'http://localhost:1337/getFollowersList',
+                    url: 'http://fantweet.mybluemix.net/getFollowersList',
                     method: "GET"
                 }).success(function(data, status, headers, config) {
                     console.log(data);
