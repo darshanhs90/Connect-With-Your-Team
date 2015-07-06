@@ -49,7 +49,7 @@ var OAuth = require('oauth').OAuth,
         "LmNp3JwAQZnuBr4SQFaM7UZG3",
         "Xps6ziqIhZ0exAPoIAeyqj7myu7L78ZLHQDni67dzD9koJQTAD",
         "1.0",
-        "http://nexmorecruiter.mybluemix.net",
+        "oob",
         "HMAC-SHA1"
     );
 var xoauth;
