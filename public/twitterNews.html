@@ -16,7 +16,12 @@
 
     <!-- Custom CSS -->
     <link href="css/simple-sidebar.css" rel="stylesheet">
-
+    <style>
+    .image:hover {
+   
+     background : #ebeaef;
+}
+</style>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -68,33 +73,52 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
-                        
+                        <h5>Click On a Tweet to Access the Images,News and Videos linked to It</h5>
                         <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-6" style="height:300px;border-style: solid;
                     border-width: 1px; overflow: scroll;">
-                        //tweets go here
-                        //limit to 10
+                       
+                        <div ng-repeat="x in tweets track by $index">
+                            <p ng-click="getNews($index)" class="image"><img src="{{tweets[0].user.profile_image_url}}" style="border-radius:25px;"> 
+                            <span  >{{x.text}}</span></p>
+                            <hr/>
+                        </div>
                    
                     </div>
                
                     <div class="col-lg-6" style="height:300px;border-style: solid;
                     border-width: 1px; overflow: scroll;">
-                        //news goes here
+                        <div ng-repeat="x in news track by $index">
+                            <p>Title:{{x.Title}}</p>
+                            <p>Source:{{x.Source}}</p>
+                            <a href="{{x.Url}}">Source Link</a>
+                            <hr/>
+                        </div>
                     
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-6" style="height:300px;border-style: solid;
                     border-width: 1px; overflow: scroll;">
-                        //images go here
+                        <div ng-repeat="y in images track by $index">
+                            
+                            <img src="{{y.MediaUrl}}" style="height:300px;width:300px;border-radius:15px;">
+                            
+                            <hr/>
+                        </div>
                         
                     </div>
                     <div class="col-lg-6" style="height:300px;border-style: solid;
                     border-width: 1px; overflow: scroll;">
-                        //videos go here
+                         <div ng-repeat="z in videos track by $index">
+                           <p> Description:{{z.Title}}</p>
+                           <p> Url:{{z.Url}}</p>
+                            
+                            <hr/>
+                        </div>
                     
                     </div>
                 </div>

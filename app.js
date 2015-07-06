@@ -228,7 +228,7 @@ app.get('/twitter/followers', function(req, res) {
                             });
                             response.on('end', function() {
                                 parsed = JSON.parse(body);
-                                console.log(parsed.status);
+                               // console.log(parsed.status);
                                 if (parsed.status == "OK") {
                                     var lengthnew = parsed.results[0].address_components.length;
                                     //console.log("********parsed**********");
@@ -352,7 +352,7 @@ app.use('/twitterSentiment', function(reqst, respns) {
         (tweets.statuses).forEach(function(e) {
             var text = e.text;
 
-            console.log('text is ' + text);
+           // console.log('text is ' + text);
             //if(count<15)
             alchemy.sentiment(text, {}, function(err, response) {
                 if (err)
@@ -456,13 +456,89 @@ res.send(randomWinner);
 res.end();
 });
 
+var timeline='';
+
+app.get('/timeline',function(req,res){
+
+var params = {screen_name: 'rcbtweets'};
+client.get('statuses/user_timeline', params, function(error, tweets, response){
+  if (!error) {
+    console.log(tweets);
+    timeline=tweets;
+    res.send(tweets);
+    res.end();
+  }
+});
+
+})
+
+app.get('/news',function(req,respns){
+
+var val=req.query.val;
+var tweet=timeline[val].text.toString();
+  alchemy.keywords(tweet, {}, function(err, response) {
+        if (err) throw err;
+
+        // See http://www.alchemyapi.com/api/keyword/htmlc.html for format of returned object
+        var keywords = response.keywords;
+        console.log(keywords);
+        if(keywords.length>1)
+            keywords='Royal challengers Bangalore';
+        Bing.news(keywords, {
+    top: 10,  // Number of results (max 50) 
+    skip: 3,   // Skip first 3 results 
+    newssortby: "Date", //Choices are: Date, Relevance 
+    newscategory: "rt_Sports" // Choices are: 
+                                //   rt_Business 
+                                //   rt_Entertainment 
+                                //   rt_Health 
+                                //   rt_Politics 
+                                //   rt_Sports 
+                                //   rt_US 
+                                //   rt_World 
+                                //   rt_ScienceAndTechnology 
+  }, function(error, res, body){
+   // console.log(body.d.results);
+    respns.send(body.d.results);
+    respns.end();
+  });
+        // Do something with data
+    });
+})
+
+app.get('/images',function(reqst,respns){
+
+Bing.images("Royal challengers Bangalore", {skip: 10}, function(error, res, body){
+  console.log(body);
+  respns.send(body.d.results);
+  respns.end();
+});  
+});
+
+
+app.get('/videos',function(reqst,respns){
+Bing.web("Royal challengers Bangalore", {
+    top: 10,  // Number of results (max 50)
+    skip: 3,   // Skip first 3 results
+  }, function(error, res, body){
+    console.log(body);
+    respns.send(body.d.results);
+    respns.end();
+  });
+
+
+
+});
+
+
+
 app.get('/postUpdate',function(req,res){
     var stat=req.query.status;
     console.log(req.query);
     client.post('statuses/update', {status: stat},  function(error, tweet, response){
   if(error) throw error;
-  console.log(tweet);  // Tweet body. 
-  console.log(response);  // Raw response object. 
+ // console.log(tweet);  // Tweet body. 
+  //console.log(response);  // Raw response object. 
   res.send('1');
   res.end();
 });
@@ -493,12 +569,12 @@ io.on('connection', function(socket) {
             }
             //text='hi how are you doind'
             var txtval=tweet.text;
-            console.log(tweet.text);
+           // console.log(tweet.text);
              alchemy.sentiment(txtval, {}, function(err, response) {
             if (err)
                 throw err;
             var sentiment = response.docSentiment;
-            console.log(sentiment);
+           // console.log(sentiment);
             if(sentiment!=undefined && sentiment.score!=undefined && parseFloat(sentiment.score)>=prevSentiment)
             {
                 prevSentiment=parseFloat(sentiment.score);
