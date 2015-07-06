@@ -5,6 +5,7 @@
 // This application uses express as it's web server
 // for more info, see: http://expressjs.com
 var app = require('express')();
+var express=require('express');
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var ahttp = require('http');
@@ -64,7 +65,7 @@ var cfenv = require('cfenv');
 // create a new express server
 app.use(cors());
 // serve the files out of ./public as our main files
-//app.use(app.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/public'));
 
 
 // get the app environment from Cloud Foundry
