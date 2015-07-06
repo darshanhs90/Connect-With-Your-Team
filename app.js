@@ -4,19 +4,27 @@
 //------------------------------------------------------------------------------
 // This application uses express as it's web server
 // for more info, see: http://expressjs.com
-var express = require('express');
+var app = require('express')();
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+var ahttp = require('http');
 var request = require('request');
 var https = require('https');
-var http = require('http');
 var cors = require('cors');
 var Twitter = require('twitter');
-var io = require('socket.io');
 var client = new Twitter({
     consumer_key: 'LmNp3JwAQZnuBr4SQFaM7UZG3',
     consumer_secret: 'Xps6ziqIhZ0exAPoIAeyqj7myu7L78ZLHQDni67dzD9koJQTAD',
     access_token_key: '151128859-F4Wk8KebqH4ZDwp8tMWY8PkoTQzfiEJrN1t2Knfc',
     access_token_secret: 'czQre16YZKoC4Csi18gGufu8PxF733aL5VnzbhurlGvHw'
 });
+var Twitter1 = require('node-tweet-stream'),
+    tw = new Twitter1({
+        consumer_key: 'LmNp3JwAQZnuBr4SQFaM7UZG3',
+        consumer_secret: 'Xps6ziqIhZ0exAPoIAeyqj7myu7L78ZLHQDni67dzD9koJQTAD',
+        token: '151128859-F4Wk8KebqH4ZDwp8tMWY8PkoTQzfiEJrN1t2Knfc',
+        token_secret: 'czQre16YZKoC4Csi18gGufu8PxF733aL5VnzbhurlGvHw'
+    });
 var watson = require('watson-developer-cloud');
 var AlchemyAPI = require('alchemy-api');
 var alchemy = new AlchemyAPI('7b6bf4773c39c9e271f6bd999fea5df5179a6dad');
@@ -25,7 +33,7 @@ var accountSid = 'AC07275e4294f1b0d42623c3ec9559911e';
 var authToken = '650d049a9bd99323fb899ce4b9e84fcc';
 var clientTwilio = require('twilio')(accountSid, authToken);
 var Twit = require('twit');
-
+var sanFrancisco = ['-122.75', '36.8', '-121.75', '37.8']
 var T = new Twit({
     consumer_key: 'LmNp3JwAQZnuBr4SQFaM7UZG3',
     consumer_secret: 'Xps6ziqIhZ0exAPoIAeyqj7myu7L78ZLHQDni67dzD9koJQTAD',
@@ -54,10 +62,9 @@ var Bing = require('node-bing-api')({
 var cfenv = require('cfenv');
 
 // create a new express server
-var app = express();
 app.use(cors());
 // serve the files out of ./public as our main files
-app.use(express.static(__dirname + '/public'));
+//app.use(app.static(__dirname + '/public'));
 
 
 // get the app environment from Cloud Foundry
@@ -65,7 +72,7 @@ var appEnv = cfenv.getAppEnv();
 
 // start server on the specified port and binding host
 //app.listen(appEnv.port, appEnv.bind, function() {
-app.listen(1337, '127.0.0.1', function() {
+server.listen(1337, '127.0.0.1', function() {
 
     // print a message when the server starts listening
     console.log("server starting on " + appEnv.url);
@@ -125,6 +132,12 @@ app.get('/auth/twitter/callback', function(req, res, next) {
                         access_token: oauth_access_token,
                         access_token_secret: oauth_access_token_secret
                     })
+                    tw = new Twitter1({
+                        consumer_key: 'LmNp3JwAQZnuBr4SQFaM7UZG3',
+                        consumer_secret: 'Xps6ziqIhZ0exAPoIAeyqj7myu7L78ZLHQDni67dzD9koJQTAD',
+                        token: oauth_access_token,
+                        token_secret: oauth_access_token_secret
+                    });
                     console.log('token');
                     console.log(oauth_access_token);
                     console.log('token secret');
@@ -145,7 +158,7 @@ app.get('/auth/twitter/callback', function(req, res, next) {
 //********************//
 //stream tweets based on location and topic
 
-var sanFrancisco = ['-122.75', '36.8', '-121.75', '37.8']
+
 app.get('/twit/stream', function(req, res) {
     var stream = T.stream('statuses/filter', {
         locations: sanFrancisco
@@ -198,6 +211,8 @@ app.get('/twitter/followers', function(req, res) {
     client.get('followers/list', params, function(error, tweets, response) {
         if (!error) {
             console.log(tweets);
+            res.send(tweets);
+            res.end();
         }
     });
 });
@@ -209,7 +224,7 @@ app.get('/tweet/keywords', function(req, res) {
 
         // See http://www.alchemyapi.com/api/keyword/htmlc.html for format of returned object
         var keywords = response.keywords;
-
+        res.end(keywords);
         // Do something with data
     });
 });
@@ -323,4 +338,117 @@ app.get('/twitterInsight', function(reqst, respns) {
         respns.end(JSON.stringify(sentiment));
     });
 
+});
+
+app.get('/getSuggestions', function(reqst, respns) {
+    locn=0;
+    client.get('users/suggestions/sports.json', function(error, tweets, response) {
+
+        //console.log(tweets);
+        //respns.end(JSON.parse(tweets));
+        respns.send(tweets);
+        respns.end();
+    });
+});
+
+var locn = false;
+var address = '';
+app.get('/updatelatlng', function(req, res) {
+    address = req.query.address;
+    console.log(address);
+    locn = 1;
+    res.end('1');
+});
+var stream;
+
+
+io.on('connection', function(socket) {
+    x = 0;
+    console.log('connected');
+    socket.emit('connection1', {
+        asd: 'asd'
+    });
+    socket.on('dashboard', function(data) {
+        console.log('dashboard');
+        tw.track('#usa');
+        tw.on('tweet', function(tweet) {
+            console.log(tweet.text);
+            if (locn == 0) {
+                //x++;
+                //console.log(tweet.text);
+                socket.emit('news', {
+                    hello: tweet
+                });
+            } else if (locn == 1) {
+                var addr = address;
+                var parsed;
+                if (tweet.place != null || tweet.user.location != '') {
+                    console.log("******************");
+                   
+                    console.log(address);
+                    console.log("******************");
+                    console.log(tweet.user.location);
+                    https.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + tweet.user.location + '&key=AIzaSyDC0W6efefYTLBzGP1jGPJSOwGdmE9Z9x4',
+                        function(response) {
+                            var body = '';
+                            response.on('data', function(d) {
+                                body += d;
+                            });
+                            response.on('end', function() {
+                                parsed = JSON.parse(body);
+                                console.log(parsed.status);
+                                if (parsed.status == "OK") {
+                                    var lengthnew = parsed.results[0].address_components.length;
+                                    console.log("********parsed**********");
+                                    console.log(parsed.results[0].address_components[0].long_name);
+                                    if (parsed.results[0].address_components[lengthnew - 1].long_name == address) {
+                                        socket.emit('news', {
+                                            hello: tweet
+                                        });
+                                    }
+                                }
+                            });
+
+                        });
+
+
+
+                }
+                //var tweet_addr=tweet.
+                //get address from tweet
+                //if this address lies in the specified adress,then tweet it
+
+                //stream.stop();
+                // tw.untrack('#wimbledon');
+                // tw.track("India");
+                // console.log('changed******************');
+                // x = 0;
+            }
+
+
+
+
+
+
+
+        });
+
+        tw.on('error', function(err) {
+            console.log('Oh no')
+        });
+    });
+
+
+
+    tw.on('error', function(err) {
+        console.log('Oh no')
+    })
+});
+
+
+
+
+io.on('error', function(error) {
+    console.log('The error: ' + error);
+    //...
 });
