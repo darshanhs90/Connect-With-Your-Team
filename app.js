@@ -18,40 +18,40 @@ var https = require('https');
 var cors = require('cors');
 var Twitter = require('twitter');
 var client = new Twitter({
-    consumer_key: 'LmNp3JwAQZnuBr4SQFaM7UZG3',
-    consumer_secret: 'Xps6ziqIhZ0exAPoIAeyqj7myu7L78ZLHQDni67dzD9koJQTAD',
-    access_token_key: '151128859-F4Wk8KebqH4ZDwp8tMWY8PkoTQzfiEJrN1t2Knfc',
-    access_token_secret: 'czQre16YZKoC4Csi18gGufu8PxF733aL5VnzbhurlGvHw'
+    consumer_key: 'consumer_key',
+    consumer_secret: 'consumer_secret',
+    access_token_key: 'access_token_key',
+    access_token_secret: 'access_token_secret'
 });
 var Twitter1 = require('node-tweet-stream'),
     tw = new Twitter1({
-        consumer_key: 'LmNp3JwAQZnuBr4SQFaM7UZG3',
-        consumer_secret: 'Xps6ziqIhZ0exAPoIAeyqj7myu7L78ZLHQDni67dzD9koJQTAD',
-        token: '151128859-F4Wk8KebqH4ZDwp8tMWY8PkoTQzfiEJrN1t2Knfc',
-        token_secret: 'czQre16YZKoC4Csi18gGufu8PxF733aL5VnzbhurlGvHw'
+        consumer_key: 'consumer_key',
+        consumer_secret: 'consumer_secret',
+        token: 'token',
+        token_secret: 'token_secret'
     });
 var watson = require('watson-developer-cloud');
 var AlchemyAPI = require('alchemy-api');
-var alchemy = new AlchemyAPI('0554d03cab53ef907d02d27eaea5c2938b471ef1');
-var sendgrid = require('sendgrid')('hsdars', 'Password90-');
-var accountSid = 'AC07275e4294f1b0d42623c3ec9559911e';
-var authToken = '650d049a9bd99323fb899ce4b9e84fcc';
+var alchemy = new AlchemyAPI('id');
+var sendgrid = require('sendgrid')('id', 'pwd');
+var accountSid = 'accountSid';
+var authToken = 'authToken';
 var clientTwilio = require('twilio')(accountSid, authToken);
 var Twit = require('twit');
 var sanFrancisco = ['-122.75', '36.8', '-121.75', '37.8']
 var T = new Twit({
-    consumer_key: 'LmNp3JwAQZnuBr4SQFaM7UZG3',
-    consumer_secret: 'Xps6ziqIhZ0exAPoIAeyqj7myu7L78ZLHQDni67dzD9koJQTAD',
-    access_token: '151128859-F4Wk8KebqH4ZDwp8tMWY8PkoTQzfiEJrN1t2Knfc',
-    access_token_secret: 'czQre16YZKoC4Csi18gGufu8PxF733aL5VnzbhurlGvHw'
+    consumer_key: 'consumer_key',
+    consumer_secret: 'consumer_secret',
+    access_token: 'access_token',
+    access_token_secret: 'access_token_secret'
 })
 
 var OAuth = require('oauth').OAuth,
     oauth = new OAuth(
         "https://api.twitter.com/oauth/request_token",
         "https://api.twitter.com/oauth/access_token",
-        "LmNp3JwAQZnuBr4SQFaM7UZG3",
-        "Xps6ziqIhZ0exAPoIAeyqj7myu7L78ZLHQDni67dzD9koJQTAD",
+        "id",
+        "token",
         "1.0",
         "oob",
         "HMAC-SHA1"
@@ -59,7 +59,7 @@ var OAuth = require('oauth').OAuth,
 var xoauth;
 
 var Bing = require('node-bing-api')({
-    accKey: "l11l8D4FBj6XkyHh3NzeMINbdY+s19eUoxrRgvgQQgQ"
+    accKey: "acckey"
 });
 
 // cfenv provides access to your Cloud Foundry environment
@@ -126,21 +126,21 @@ app.get('/auth/twitter/callback', function(req, res, next) {
                     xoauth.access_token_secret = oauth_access_token_secret;
                     console.log(results, xoauth);
                     client = new Twitter({
-                        consumer_key: 'LmNp3JwAQZnuBr4SQFaM7UZG3',
-                        consumer_secret: 'Xps6ziqIhZ0exAPoIAeyqj7myu7L78ZLHQDni67dzD9koJQTAD',
+                        consumer_key: 'consumer_key',
+                        consumer_secret: 'consumer_secret',
                         access_token_key: oauth_access_token,
                         access_token_secret: oauth_access_token_secret
                     });
 
                     T = new Twit({
-                        consumer_key: 'LmNp3JwAQZnuBr4SQFaM7UZG3',
-                        consumer_secret: 'Xps6ziqIhZ0exAPoIAeyqj7myu7L78ZLHQDni67dzD9koJQTAD',
+                        consumer_key: 'consumer_key',
+                        consumer_secret: 'consumer_secret',
                         access_token: oauth_access_token,
                         access_token_secret: oauth_access_token_secret
                     })
                     tw = new Twitter1({
-                        consumer_key: 'LmNp3JwAQZnuBr4SQFaM7UZG3',
-                        consumer_secret: 'Xps6ziqIhZ0exAPoIAeyqj7myu7L78ZLHQDni67dzD9koJQTAD',
+                        consumer_key: 'consumer_key',
+                        consumer_secret: 'consumer_secret',
                         token: oauth_access_token,
                         token_secret: oauth_access_token_secret
                     });
@@ -225,7 +225,7 @@ app.get('/twitter/followers', function(req, res) {
                 if(lcn='')
                     lcn='India';
 
-                https.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + lcn + '&key=AIzaSyDWUnMGxYQzaDMTJSkH8btb4oJnLVGo178',
+                https.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + lcn + '&key=key',
                         function(response) {
                             var body = '';
                             response.on('data', function(d) {
@@ -636,7 +636,7 @@ io.on('connection', function(socket) {
                     // console.log(address);
                     // console.log("******************");
                     // console.log(tweet.user.location);
-                    https.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + tweet.user.location + '&key=AIzaSyDWUnMGxYQzaDMTJSkH8btb4oJnLVGo178',
+                    https.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + tweet.user.location + '&key=key',
                         function(response) {
                             var body = '';
                             response.on('data', function(d) {
@@ -688,7 +688,7 @@ io.on('connection', function(socket) {
                 var addr = address;
                 var parsed;
                 if (tweet.place != null || tweet.user.location != '') {
-                    https.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + tweet.user.location + '&key=AIzaSyDWUnMGxYQzaDMTJSkH8btb4oJnLVGo178',
+                    https.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + tweet.user.location + '&key=key',
                         function(response) {
                             var body = '';
                             response.on('data', function(d) {
